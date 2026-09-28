@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test
+        run: swift test
+
+      - name: Package
+        id: package
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          archive="$(./scripts/package.sh "$version")"
+          echo "archive=$archive" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(shasum -a 256 "$archive" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Changelog
+        id: changelog
+        run: |
+          previous="$(git describe --tags --abbrev=0 "$GITHUB_REF_NAME^" 2>/dev/null || true)"
+          range="${previous:+$previous..}$GITHUB_REF_NAME"
+          {
+            echo "notes<<EOF"
+            git log --pretty=format:'- %s' "$range"
+            echo
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.package.outputs.archive }}
+          body: |
+            ## Changes
+            ${{ steps.changelog.outputs.notes }}
+
+            ## Install
+            ```bash
+            brew install --cask subiqt/rookbar/rookbar
+            ```
+
+            SHA-256: `${{ steps.package.outputs.sha256 }}`

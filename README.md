@@ -17,6 +17,15 @@ matched to the wallpaper.
 ## Install
 
 ```bash
+brew install --cask subiqt/rookbar/rookbar
+```
+
+The cask installs `rookbar.app`, links the `rookbar` command and enables the launch agent, so the bar
+starts immediately and at every login. `brew uninstall --cask rookbar` stops it and removes the agent.
+
+To build from source instead:
+
+```bash
 make install                                         # builds and copies rookbar.app to /Applications
 /Applications/rookbar.app/Contents/MacOS/rookbar --enable-service
 ```
@@ -58,4 +67,8 @@ signal.
 make build     # debug build
 make test      # unit tests
 make bundle    # build/rookbar.app
+make package VERSION=0.1.0   # build/rookbar-0.1.0-macos.zip
 ```
+
+Pushing a `v*` tag builds the zip on GitHub Actions and attaches it to a release. Then update
+`version` and `sha256` in the [homebrew-rookbar](https://github.com/SubiqT/homebrew-rookbar) cask.
