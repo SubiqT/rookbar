@@ -6,11 +6,17 @@ enum Theme {
     static let red = Color(hex: 0xCC6566)
     static let yellow = Color(hex: 0xF0C674)
     static let brightGreen = Color(hex: 0xB9CA4B)
-    static let brightMagenta = Color(hex: 0xC397D8)
+    static let defaultAccent = Color(hex: 0xC397D8)
     static let comment = Color(hex: 0x666666)
 
     static let barPadding: CGFloat = 8
     static let itemHeight: CGFloat = 24
+
+    static let fontFamily = "JetBrains Mono"
+
+    static func font(size: CGFloat, weight: Font.Weight = .medium) -> Font {
+        .custom(fontFamily, size: size).weight(weight)
+    }
 }
 
 extension Color {

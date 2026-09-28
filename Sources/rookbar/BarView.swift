@@ -1,9 +1,12 @@
 import SwiftUI
 
 struct BarView: View {
+    let yabai: YabaiMonitor
+
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
+                SpacesView(monitor: yabai, accent: Theme.defaultAccent)
                 Spacer(minLength: 0)
             }
         }
