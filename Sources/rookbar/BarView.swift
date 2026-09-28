@@ -9,6 +9,7 @@ final class BarModels {
     let volume = VolumeModel()
     let battery = BatteryModel()
     let network = NetworkModel()
+    let accent = AccentModel()
 
     func start() {
         yabai.start()
@@ -16,6 +17,7 @@ final class BarModels {
         volume.start()
         battery.start()
         network.start()
+        accent.start()
     }
 
     func stop() {
@@ -29,7 +31,7 @@ struct BarView: View {
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
-                SpacesView(monitor: models.yabai, accent: Theme.defaultAccent)
+                SpacesView(monitor: models.yabai, accent: models.accent.color)
                 Spacer(minLength: 0)
                 StatusItemsView(models: models)
             }

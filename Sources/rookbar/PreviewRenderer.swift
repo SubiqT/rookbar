@@ -11,6 +11,7 @@ enum PreviewRenderer {
         models.volume.start()
         models.battery.start()
         models.network.start()
+        models.accent.start()
         RunLoop.main.run(until: Date().addingTimeInterval(1))
 
         let renderer = ImageRenderer(
