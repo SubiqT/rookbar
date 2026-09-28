@@ -59,7 +59,7 @@ private struct SpaceTile: View {
     }
 
     private var iconColor: Color {
-        space.isFocused ? Theme.foreground : Theme.foreground.opacity(0.55)
+        space.isFocused ? accent : Theme.foreground.opacity(0.55)
     }
 
     var body: some View {
