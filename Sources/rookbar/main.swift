@@ -9,6 +9,10 @@ if arguments.first == "--render-preview" {
     exit(MainActor.assumeIsolated { PreviewRenderer.render(to: path, width: width) })
 }
 
+if let status = CommandLineInterface.run(arguments) {
+    exit(status)
+}
+
 guard let instanceLock = InstanceLock(path: InstanceLock.defaultPath, timeout: 2) else {
     FileHandle.standardError.write(Data("rookbar is already running\n".utf8))
     exit(0)
