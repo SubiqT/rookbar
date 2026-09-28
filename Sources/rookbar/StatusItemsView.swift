@@ -28,7 +28,6 @@ struct StatusItem<Content: View>: View {
     }
 }
 
-/// An SF Symbol sized to match the Material icons jaybar used.
 struct StatusIcon: View {
     let name: String
     var color: Color = Theme.foreground

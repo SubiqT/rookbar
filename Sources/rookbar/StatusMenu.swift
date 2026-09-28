@@ -1,7 +1,7 @@
 import AppKit
 import RookbarCore
 
-/// Menu bar item with Restart and Quit, matching jaybar's tray menu.
+/// Menu bar item with Restart and Quit.
 @MainActor
 final class StatusMenu: NSObject {
     private let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)

@@ -12,7 +12,7 @@ matched to the wallpaper.
 - [yabai](https://github.com/koekeishiya/yabai), with the scripting addition loaded for
   clicking a space to focus it
 - An `external_bar` setting in `.yabairc` so windows leave room for the 32pt bar, for example
-  `yabai -m config external_bar all:34:0`
+  `yabai -m config external_bar all:32:0`
 
 ## Install
 
@@ -20,9 +20,6 @@ matched to the wallpaper.
 make install                                         # builds and copies rookbar.app to /Applications
 /Applications/rookbar.app/Contents/MacOS/rookbar --enable-service
 ```
-
-To switch from jaybar, `scripts/replace-jaybar.sh` installs rookbar, disables jaybar's launch agent
-and removes its yabai signals. `scripts/restore-jaybar.sh` switches back.
 
 ## Usage
 

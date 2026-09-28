@@ -1,6 +1,6 @@
 import Foundation
 
-/// Formats the clock as jaybar does: "Tue 18th Nov at" followed by "23:39".
+/// Formats the clock as "Tue 18th Nov at" followed by "23:39".
 public enum ClockText {
     public static func date(_ date: Date, calendar: Calendar = .current) -> String {
         let components = calendar.dateComponents([.weekday, .day, .month], from: date)

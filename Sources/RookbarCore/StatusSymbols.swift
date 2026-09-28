@@ -1,4 +1,4 @@
-/// Maps system readings to the icon and colour tiers jaybar used, expressed as SF Symbol names.
+/// Maps system readings to the SF Symbol names and colour tiers the status items show.
 public enum StatusSymbols {
     public enum Tint: Equatable, Sendable {
         case normal, warning, critical
