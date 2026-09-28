@@ -1,5 +1,6 @@
 import CoreText
 import Foundation
+import RookbarCore
 import SwiftUI
 
 enum Theme {
@@ -24,6 +25,19 @@ enum Theme {
         return .custom("JetBrainsMono-\(face)", size: size)
     }
 
+    /// Monochrome app logos from sketchybar-app-font, drawn as text so they take the surrounding colour.
+    static func appGlyph(size: CGFloat) -> Font {
+        .custom("sketchybar-app-font", size: size)
+    }
+
+    static let appGlyphs: AppGlyphMap = {
+        guard let url = resourcesDirectory?.appendingPathComponent("AppIcons/icon_map.json"),
+              let data = try? Data(contentsOf: url),
+              let map = try? AppGlyphMap(iconMapJSON: data)
+        else { return AppGlyphMap(ligatures: [:]) }
+        return map
+    }()
+
     /// Registers the bundled fonts for this process only, so nothing is installed system-wide.
     static func registerBundledFonts() {
         guard let directory = resourcesDirectory?.appendingPathComponent("Fonts"),
@@ -35,7 +49,7 @@ enum Theme {
     }
 
     /// The app bundle's Resources, or the repository's Resources when run from `swift run`.
-    private static var resourcesDirectory: URL? {
+    static var resourcesDirectory: URL? {
         if let bundled = Bundle.main.resourceURL,
            FileManager.default.fileExists(atPath: bundled.appendingPathComponent("Fonts").path) {
             return bundled

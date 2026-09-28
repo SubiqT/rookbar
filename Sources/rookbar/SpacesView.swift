@@ -32,9 +32,19 @@ struct SpacesView: View {
     }
 }
 
+/// `defaults write com.rookbar SpaceIconStyle colour` switches back to full-colour app icons.
+enum SpaceIconStyle: String {
+    case glyph, colour
+
+    static var current: SpaceIconStyle {
+        UserDefaults.standard.string(forKey: "SpaceIconStyle").flatMap(SpaceIconStyle.init) ?? .glyph
+    }
+}
+
 /// A space's number followed by icons for the apps on it; empty spaces show just a dimmed number.
 private struct SpaceTile: View {
     static let iconLimit = 3
+    static let iconStyle = SpaceIconStyle.current
 
     let space: SpaceIndicator
     let accent: Color
@@ -48,6 +58,10 @@ private struct SpaceTile: View {
         return space.isOccupied ? Theme.foreground.opacity(0.75) : Theme.foreground.opacity(0.3)
     }
 
+    private var iconColor: Color {
+        space.isFocused ? Theme.foreground : Theme.foreground.opacity(0.55)
+    }
+
     var body: some View {
         let apps = SpaceIndicator.visibleApps(space.apps, limit: Self.iconLimit)
         HStack(spacing: 4) {
@@ -57,7 +71,7 @@ private struct SpaceTile: View {
             if !apps.shown.isEmpty || apps.overflow > 0 {
                 HStack(spacing: 2) {
                     ForEach(apps.shown) { app in
-                        SpaceAppIcon(pid: app.pid)
+                        SpaceAppMark(app: app, style: Self.iconStyle, glyphColor: iconColor)
                     }
                     if apps.overflow > 0 {
                         Text("+\(apps.overflow)")
@@ -65,8 +79,8 @@ private struct SpaceTile: View {
                             .foregroundStyle(Theme.foreground.opacity(0.6))
                     }
                 }
-                .opacity(space.isFocused ? 1 : 0.7)
-                .saturation(space.isFocused ? 1 : 0.4)
+                .opacity(Self.iconStyle == .colour && !space.isFocused ? 0.7 : 1)
+                .saturation(Self.iconStyle == .colour && !space.isFocused ? 0.4 : 1)
             }
         }
         .padding(.horizontal, 6)
@@ -96,6 +110,32 @@ private struct SpaceTile: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { isPulsing = false }
         }
         .help(space.apps.map(\.name).joined(separator: ", "))
+    }
+}
+
+private struct SpaceAppMark: View {
+    let app: SpaceApp
+    let style: SpaceIconStyle
+    let glyphColor: Color
+
+    var body: some View {
+        if style == .glyph {
+            SpaceAppGlyph(name: app.name, color: glyphColor)
+        } else {
+            SpaceAppIcon(pid: app.pid)
+        }
+    }
+}
+
+private struct SpaceAppGlyph: View {
+    let name: String
+    let color: Color
+
+    var body: some View {
+        Text(Theme.appGlyphs.ligature(for: name))
+            .font(Theme.appGlyph(size: 13))
+            .foregroundStyle(color)
+            .fixedSize()
     }
 }
 

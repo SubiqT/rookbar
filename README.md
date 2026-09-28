@@ -39,6 +39,11 @@ rookbar --render-preview [PATH] Render the bar with live data to a PNG
 The launch agent restarts rookbar after a crash but not after Quit. Logs go to
 `~/Library/Logs/rookbar.log`.
 
+Each space shows its number and the apps on it as monochrome logos from
+[sketchybar-app-font](https://github.com/kvndrsslr/sketchybar-app-font) (CC0). Apps the font does
+not know get a generic glyph. For full-colour app icons instead, run
+`defaults write com.rookbar SpaceIconStyle colour` and restart rookbar.
+
 Click a space to focus it, the cup to keep the display awake, and the network icon to show the
 connection name. Showing the Wi-Fi network name needs Location Services permission; without it
 rookbar shows "Wi-Fi".
