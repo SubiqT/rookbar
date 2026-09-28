@@ -6,12 +6,12 @@ import SwiftUI
 enum PreviewRenderer {
     static func render(to path: String, width: CGFloat) -> Int32 {
         Theme.registerBundledFonts()
-        let yabai = YabaiMonitor()
-        yabai.refresh()
+        let models = BarModels()
+        models.yabai.refresh()
         RunLoop.main.run(until: Date().addingTimeInterval(1))
 
         let renderer = ImageRenderer(
-            content: BarView(yabai: yabai)
+            content: BarView(models: models)
                 .frame(width: width, height: BarPanel.height)
                 .environment(\.colorScheme, .dark)
         )

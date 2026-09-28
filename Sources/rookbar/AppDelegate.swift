@@ -2,15 +2,15 @@ import AppKit
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private let yabai = YabaiMonitor()
+    private let models = BarModels()
     private var panel: BarPanel?
     private var terminationSources: [DispatchSourceSignal] = []
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         terminateGracefully(on: [SIGTERM, SIGINT])
-        yabai.start()
+        models.start()
 
-        let panel = BarPanel(rootView: BarView(yabai: yabai))
+        let panel = BarPanel(rootView: BarView(models: models))
         panel.orderFrontRegardless()
         self.panel = panel
 
@@ -24,7 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        yabai.stop()
+        models.stop()
     }
 
     /// launchd stops the service with SIGTERM, which would otherwise skip `applicationWillTerminate`.
