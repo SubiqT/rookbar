@@ -98,11 +98,6 @@ public struct SpaceIndicator: Equatable, Sendable, Identifiable {
         let shown = Array(apps.prefix(max(0, limit - 1)))
         return (shown, apps.count - shown.count)
     }
-
-    /// Spaces are shown in groups of three separated by a divider.
-    public static func hasDivider(after position: Int, count: Int) -> Bool {
-        (position + 1) % 3 == 0 && position < count - 1
-    }
 }
 
 /// The application shown in the centre of the bar; nil `pid` means the focused space has no focused window.

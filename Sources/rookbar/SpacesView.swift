@@ -17,14 +17,8 @@ struct SpacesView: View {
             }
         } else {
             HStack(spacing: 2) {
-                ForEach(Array(monitor.spaces.enumerated()), id: \.element.id) { position, space in
+                ForEach(monitor.spaces) { space in
                     SpaceTile(space: space, accent: accent) { monitor.focusSpace(space.index) }
-                    if SpaceIndicator.hasDivider(after: position, count: monitor.spaces.count) {
-                        Rectangle()
-                            .fill(.white.opacity(0.24))
-                            .frame(width: 1, height: 12)
-                            .padding(.horizontal, 6)
-                    }
                 }
             }
             .frame(maxHeight: .infinity)

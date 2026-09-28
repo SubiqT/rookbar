@@ -62,10 +62,4 @@ import Testing
         #expect(FocusedApp.resolve(focusedSpace: spaces[1], focusedWindow: window(space: 1)) == .desktop)
         #expect(FocusedApp.resolve(focusedSpace: spaces[1], focusedWindow: nil) == .desktop)
     }
-
-    @Test func dividersSeparateGroupsOfThreeButNotTheEnd() {
-        let dividers = (0..<9).filter { SpaceIndicator.hasDivider(after: $0, count: 9) }
-        #expect(dividers == [2, 5])
-        #expect(!SpaceIndicator.hasDivider(after: 2, count: 3))
-    }
 }
