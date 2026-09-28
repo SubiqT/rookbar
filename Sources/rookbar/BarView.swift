@@ -9,6 +9,8 @@ struct BarView: View {
                 SpacesView(monitor: yabai, accent: Theme.defaultAccent)
                 Spacer(minLength: 0)
             }
+            FocusedAppView(app: yabai.focusedApp)
+                .allowsHitTesting(false)
         }
         .padding(.horizontal, Theme.barPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

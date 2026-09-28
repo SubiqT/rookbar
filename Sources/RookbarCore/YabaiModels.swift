@@ -50,7 +50,7 @@ public struct SpaceIndicator: Equatable, Sendable, Identifiable {
 }
 
 /// The application shown in the centre of the bar; nil `pid` means the focused space has no focused window.
-public struct FocusedApp: Equatable, Sendable {
+public struct FocusedApp: Hashable, Sendable {
     public static let desktop = FocusedApp(name: "Desktop", pid: nil)
 
     public let name: String
