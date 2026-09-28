@@ -16,14 +16,14 @@ struct SpacesView: View {
                     .foregroundStyle(.white.opacity(0.7))
             }
         } else {
-            HStack(spacing: 0) {
+            HStack(spacing: 2) {
                 ForEach(Array(monitor.spaces.enumerated()), id: \.element.id) { position, space in
-                    SpaceDot(space: space, accent: accent) { monitor.focusSpace(space.index) }
+                    SpaceTile(space: space, accent: accent) { monitor.focusSpace(space.index) }
                     if SpaceIndicator.hasDivider(after: position, count: monitor.spaces.count) {
                         Rectangle()
                             .fill(.white.opacity(0.24))
                             .frame(width: 1, height: 12)
-                            .padding(.horizontal, 8)
+                            .padding(.horizontal, 6)
                     }
                 }
             }
@@ -32,7 +32,10 @@ struct SpacesView: View {
     }
 }
 
-private struct SpaceDot: View {
+/// A space's number followed by icons for the apps on it; empty spaces show just a dimmed number.
+private struct SpaceTile: View {
+    static let iconLimit = 3
+
     let space: SpaceIndicator
     let accent: Color
     let onSelect: () -> Void
@@ -40,36 +43,75 @@ private struct SpaceDot: View {
     @State private var isHovered = false
     @State private var isPulsing = false
 
-    private var dotColor: Color {
+    private var numberColor: Color {
         if space.isFocused { return accent }
-        return space.isOccupied ? Theme.foreground : Theme.foreground.opacity(0.3)
+        return space.isOccupied ? Theme.foreground.opacity(0.75) : Theme.foreground.opacity(0.3)
     }
 
     var body: some View {
-        let diameter: CGFloat = space.isFocused ? 12 : 8
-        ZStack(alignment: .bottom) {
-            Circle()
-                .fill(dotColor)
-                .frame(width: diameter, height: diameter)
-                .padding(.top, space.isFocused ? 1 : 0)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        let apps = SpaceIndicator.visibleApps(space.apps, limit: Self.iconLimit)
+        HStack(spacing: 4) {
+            Text("\(space.index)")
+                .font(Theme.font(size: 11, weight: .bold))
+                .foregroundStyle(numberColor)
+            if !apps.shown.isEmpty || apps.overflow > 0 {
+                HStack(spacing: 2) {
+                    ForEach(apps.shown) { app in
+                        SpaceAppIcon(pid: app.pid)
+                    }
+                    if apps.overflow > 0 {
+                        Text("+\(apps.overflow)")
+                            .font(Theme.font(size: 9, weight: .semibold))
+                            .foregroundStyle(Theme.foreground.opacity(0.6))
+                    }
+                }
+                .opacity(space.isFocused ? 1 : 0.7)
+                .saturation(space.isFocused ? 1 : 0.4)
+            }
+        }
+        .padding(.horizontal, 6)
+        .frame(minWidth: 22)
+        .frame(maxHeight: .infinity)
+        .background {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(.white.opacity(isHovered ? 0.08 : (space.isFocused ? 0.05 : 0)))
+                .padding(.vertical, 4)
+        }
+        .overlay(alignment: .bottom) {
             if space.isFocused {
                 Rectangle()
                     .fill(accent)
                     .frame(height: 2)
             }
         }
-        .frame(width: 24)
-        .frame(maxHeight: .infinity)
         .contentShape(Rectangle())
-        .scaleEffect(isPulsing ? 1.2 : (isHovered ? 1.1 : 1.0))
-        .animation(.easeInOut(duration: 0.1), value: isHovered)
+        .scaleEffect(isPulsing ? 1.08 : 1.0)
+        .animation(.easeInOut(duration: 0.12), value: isHovered)
         .animation(.easeInOut(duration: 0.1), value: isPulsing)
+        .animation(.easeInOut(duration: 0.15), value: space)
         .onHover { isHovered = $0 }
         .onTapGesture {
             isPulsing = true
             onSelect()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { isPulsing = false }
+        }
+        .help(space.apps.map(\.name).joined(separator: ", "))
+    }
+}
+
+private struct SpaceAppIcon: View {
+    let pid: Int32
+
+    var body: some View {
+        if let icon = AppIconCache.icon(for: pid) {
+            Image(nsImage: icon)
+                .resizable()
+                .interpolation(.high)
+                .frame(width: 14, height: 14)
+        } else {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Theme.comment.opacity(0.5))
+                .frame(width: 12, height: 12)
         }
     }
 }

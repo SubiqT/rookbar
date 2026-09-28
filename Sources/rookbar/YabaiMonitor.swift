@@ -104,9 +104,10 @@ final class YabaiMonitor {
         static func load(from client: YabaiClient) -> Snapshot? {
             guard let spaces = try? client.query([YabaiSpace].self, ["--spaces"]) else { return nil }
             let focusedSpace = spaces.first(where: \.hasFocus)
-            let focusedWindow = try? client.query(YabaiWindow.self, ["--windows", "--window"])
+            let windows = (try? client.query([YabaiWindow].self, ["--windows"])) ?? []
+            let focusedWindow = windows.first(where: \.hasFocus)
             return Snapshot(
-                spaces: spaces.map(SpaceIndicator.init),
+                spaces: SpaceIndicator.build(spaces: spaces, windows: windows),
                 focusedApp: FocusedApp.resolve(focusedSpace: focusedSpace, focusedWindow: focusedWindow),
                 layout: focusedSpace?.type ?? "bsp"
             )

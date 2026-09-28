@@ -41,7 +41,7 @@ private struct AppIcon: View {
 }
 
 @MainActor
-private enum AppIconCache {
+enum AppIconCache {
     private static var icons: [String: NSImage] = [:]
 
     static func icon(for pid: Int32) -> NSImage? {
