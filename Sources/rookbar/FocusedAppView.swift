@@ -5,15 +5,21 @@ import SwiftUI
 struct FocusedAppView: View {
     let app: FocusedApp?
 
+    private let textColor = Theme.foreground.opacity(0.7)
+
     var body: some View {
         let app = app ?? FocusedApp(name: "Loading...", pid: nil)
         ZStack {
             HStack(spacing: 6) {
-                AppIcon(pid: app.pid)
-                    .frame(width: 16, height: 16)
+                if app.pid != nil, AppIconStyle.current == .glyph {
+                    AppGlyph(name: app.name, color: textColor, size: 14)
+                } else {
+                    AppIcon(pid: app.pid)
+                        .frame(width: 16, height: 16)
+                }
                 Text(app.name)
                     .font(Theme.font(size: 12))
-                    .foregroundStyle(Theme.foreground.opacity(0.7))
+                    .foregroundStyle(textColor)
                     .lineLimit(1)
             }
             .id(app)
@@ -37,19 +43,5 @@ private struct AppIcon: View {
             RoundedRectangle(cornerRadius: 2)
                 .fill(Theme.comment.opacity(0.3))
         }
-    }
-}
-
-@MainActor
-enum AppIconCache {
-    private static var icons: [String: NSImage] = [:]
-
-    static func icon(for pid: Int32) -> NSImage? {
-        guard let app = NSRunningApplication(processIdentifier: pid) else { return nil }
-        let key = app.bundleIdentifier ?? app.bundleURL?.path ?? String(pid)
-        if let cached = icons[key] { return cached }
-        guard let icon = app.icon else { return nil }
-        icons[key] = icon
-        return icon
     }
 }

@@ -26,19 +26,10 @@ struct SpacesView: View {
     }
 }
 
-/// `defaults write com.rookbar SpaceIconStyle colour` switches back to full-colour app icons.
-enum SpaceIconStyle: String {
-    case glyph, colour
-
-    static var current: SpaceIconStyle {
-        UserDefaults.standard.string(forKey: "SpaceIconStyle").flatMap(SpaceIconStyle.init) ?? .glyph
-    }
-}
-
 /// A space's number followed by icons for the apps on it; empty spaces show just a dimmed number.
 private struct SpaceTile: View {
     static let iconLimit = 3
-    static let iconStyle = SpaceIconStyle.current
+    static let iconStyle = AppIconStyle.current
 
     let space: SpaceIndicator
     let accent: Color
@@ -109,27 +100,15 @@ private struct SpaceTile: View {
 
 private struct SpaceAppMark: View {
     let app: SpaceApp
-    let style: SpaceIconStyle
+    let style: AppIconStyle
     let glyphColor: Color
 
     var body: some View {
         if style == .glyph {
-            SpaceAppGlyph(name: app.name, color: glyphColor)
+            AppGlyph(name: app.name, color: glyphColor)
         } else {
             SpaceAppIcon(pid: app.pid)
         }
-    }
-}
-
-private struct SpaceAppGlyph: View {
-    let name: String
-    let color: Color
-
-    var body: some View {
-        Text(Theme.appGlyphs.ligature(for: name))
-            .font(Theme.appGlyph(size: 13))
-            .foregroundStyle(color)
-            .fixedSize()
     }
 }
 
