@@ -2,15 +2,18 @@ import RookbarCore
 import SwiftUI
 
 struct StatusItemsView: View {
-    let yabai: YabaiMonitor
-    let clock: ClockModel
-    let caffeinate: CaffeinateModel
+    let models: BarModels
 
     var body: some View {
         HStack(spacing: 4) {
-            StatusItem { LayoutModeView(layout: yabai.layout) }
-            StatusItem { CaffeinateView(model: caffeinate) }
-            StatusItem { ClockView(clock: clock) }
+            StatusItem { LayoutModeView(layout: models.yabai.layout) }
+            StatusItem { CaffeinateView(model: models.caffeinate) }
+            StatusItem { VolumeView(model: models.volume) }
+            if models.battery.level != nil {
+                StatusItem { BatteryView(model: models.battery) }
+            }
+            StatusItem { NetworkView(model: models.network) }
+            StatusItem { ClockView(clock: models.clock) }
         }
     }
 }
@@ -70,6 +73,62 @@ private struct CaffeinateView: View {
         .frame(width: 20, height: 20)
         .contentShape(Rectangle())
         .onTapGesture { model.toggle() }
+    }
+}
+
+private struct VolumeView: View {
+    let model: VolumeModel
+
+    var body: some View {
+        let level = model.level ?? 0
+        let color = model.isMuted ? Theme.red : Theme.foreground
+        HStack(spacing: 4) {
+            StatusIcon(name: StatusSymbols.volume(level: level, isMuted: model.isMuted), color: color)
+            if model.isMuted {
+                StatusText(text: "Muted", color: color)
+            } else if let modelLevel = model.level {
+                StatusText(text: "\(modelLevel)%")
+            }
+        }
+    }
+}
+
+private struct BatteryView: View {
+    let model: BatteryModel
+
+    var body: some View {
+        let level = model.level ?? 0
+        let color: Color = switch StatusSymbols.batteryTint(level: level) {
+        case .critical: Theme.red
+        case .warning: Theme.yellow
+        case .normal: Theme.foreground
+        }
+        HStack(spacing: 4) {
+            StatusIcon(name: StatusSymbols.battery(level: level, isOnAC: model.isOnAC), color: color, size: 13)
+            StatusText(text: "\(level)%", color: color)
+        }
+    }
+}
+
+private struct NetworkView: View {
+    let model: NetworkModel
+    @State private var showsName = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            StatusIcon(
+                name: StatusSymbols.network(model.connection),
+                color: model.connection == .offline ? Theme.red : Theme.foreground
+            )
+            if showsName && !model.name.isEmpty {
+                StatusText(text: model.name)
+                    .transition(.opacity.combined(with: .move(edge: .leading)))
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.2)) { showsName.toggle() }
+        }
     }
 }
 

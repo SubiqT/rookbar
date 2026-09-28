@@ -6,10 +6,16 @@ final class BarModels {
     let yabai = YabaiMonitor()
     let clock = ClockModel()
     let caffeinate = CaffeinateModel()
+    let volume = VolumeModel()
+    let battery = BatteryModel()
+    let network = NetworkModel()
 
     func start() {
         yabai.start()
         clock.start()
+        volume.start()
+        battery.start()
+        network.start()
     }
 
     func stop() {
@@ -25,7 +31,7 @@ struct BarView: View {
             HStack(spacing: 0) {
                 SpacesView(monitor: models.yabai, accent: Theme.defaultAccent)
                 Spacer(minLength: 0)
-                StatusItemsView(yabai: models.yabai, clock: models.clock, caffeinate: models.caffeinate)
+                StatusItemsView(models: models)
             }
             FocusedAppView(app: models.yabai.focusedApp)
                 .allowsHitTesting(false)

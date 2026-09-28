@@ -8,6 +8,9 @@ enum PreviewRenderer {
         Theme.registerBundledFonts()
         let models = BarModels()
         models.yabai.refresh()
+        models.volume.start()
+        models.battery.start()
+        models.network.start()
         RunLoop.main.run(until: Date().addingTimeInterval(1))
 
         let renderer = ImageRenderer(
